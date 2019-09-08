@@ -1,11 +1,10 @@
 import React from "react";
-import { Text, Button } from "react-native-elements";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 
 const StatisticsScreen = () => {
   return (
     <View>
-      <Text h1>StatisticsScreen</Text>
+      <Text>StatisticsScreen</Text>
     </View>
   );
 };

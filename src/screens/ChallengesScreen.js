@@ -1,11 +1,11 @@
 import React from "react";
-import { Text, Button } from "react-native-elements";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text, Button } from "react-native";
 
-const ChallengesScreen = () => {
+const ChallengesScreen = ({ navigation }) => {
   return (
     <View>
-      <Text h1>ChallengesScreen</Text>
+      <Text>ChallengesScreen</Text>
+      <Button title="Game" onPress={() => navigation.navigate("Game")} />
     </View>
   );
 };

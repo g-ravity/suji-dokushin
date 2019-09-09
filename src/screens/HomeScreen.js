@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     state.fontLoaded && (
-      <SafeAreaView forceInset={{ top: "always" }}>
+      <SafeAreaView forceInset={{ top: "always" }} style={{ flex: 1 }}>
         <StatusBar hidden={false} barStyle="dark-content" />
         <View style={style.containerStyle}>
           <View style={{ alignItems: "center" }}>
@@ -46,7 +46,7 @@ const HomeScreen = ({ navigation }) => {
 
 const style = StyleSheet.create({
   containerStyle: {
-    height: "100%",
+    flex: 1,
     alignItems: "center",
     justifyContent: "space-around"
   },

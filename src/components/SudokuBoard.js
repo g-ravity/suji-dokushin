@@ -18,7 +18,7 @@ const generateSudoku = () => {
 };
 
 const SudokuBoard = () => {
-  const [sudoku, setSudoku] = useState(generateSudoku());
+  const [sudoku] = useState(generateSudoku());
 
   renderSquares = () =>
     sudoku.map((numList, index) => (

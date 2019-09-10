@@ -2,7 +2,7 @@ import * as Font from "expo-font";
 
 import createDataContext from "./createDataContext";
 
-const FontReducer = (state, action) => {
+const fontReducer = (state, action) => {
   switch (action.type) {
     case "font_loaded":
       return { fontLoaded: true };
@@ -26,7 +26,7 @@ const loadFont = dispatch => () => {
 };
 
 export const { Context, Provider } = createDataContext(
-  FontReducer,
+  fontReducer,
   { loadFont },
   { fontLoaded: false }
 );

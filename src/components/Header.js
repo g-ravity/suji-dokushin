@@ -6,24 +6,37 @@ import SafeAreaView from "react-native-safe-area-view";
 import { withNavigation } from "react-navigation";
 
 import { Context as FontContext } from "../context/FontContext";
+import { Context as GameContext } from "../context/GameContext";
+import Timer from "./Timer";
 
 const Header = ({ navigation }) => {
-  const { state, loadFont } = useContext(FontContext);
+  const { state: fontState, loadFont } = useContext(FontContext);
+  const { state, pauseGame, resumeGame } = useContext(GameContext);
 
   useEffect(() => {
     loadFont();
   }, []);
 
+  renderButton = () => {
+    return state.isPaused ? (
+      <Button onPress={resumeGame}>
+        <Feather name="play" size={30} style={{ color: "#ffffff" }} />
+      </Button>
+    ) : (
+      <Button onPress={pauseGame}>
+        <Feather name="pause" size={30} style={{ color: "#ffffff" }} />
+      </Button>
+    );
+  };
+
   return (
-    state.fontLoaded && (
+    fontState.fontLoaded && (
       <SafeAreaView forceInset={{ top: "always" }} style={style.headerStyle}>
         <Button onPress={() => navigation.pop()}>
           <Feather name="arrow-left" size={30} style={{ color: "#ffffff" }} />
         </Button>
-        <Text style={style.timerStyle}>3:05</Text>
-        <Button>
-          <Feather name="pause" size={30} style={{ color: "#ffffff" }} />
-        </Button>
+        <Timer isPaused={state.isPaused} />
+        {renderButton()}
       </SafeAreaView>
     )
   );
@@ -36,11 +49,6 @@ const style = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
-  },
-  timerStyle: {
-    color: "#ffffff",
-    fontSize: 28,
-    fontFamily: "JosefinSans-Regular"
   }
 });
 

@@ -3,26 +3,53 @@ import { View, StyleSheet, Text, StatusBar, FlatList } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Context as FontContext } from "../context/FontContext";
+import { Context as GameContext } from "../context/GameContext";
 import Header from "../components/Header";
 import SudokuBoard from "../components/SudokuBoard";
 
 const GameScreen = () => {
-  const { state, loadFont } = useContext(FontContext);
+  const { state: fontState, loadFont } = useContext(FontContext);
+  const { state } = useContext(GameContext);
 
   useEffect(() => {
     loadFont();
   }, []);
 
   return (
-    state.fontLoaded && (
+    fontState.fontLoaded && (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} barStyle="light-content" />
+
         <View style={style.containerStyle}>
           <Text style={style.textStyle}>EASY</Text>
           <Text style={style.textStyle}>0/3</Text>
         </View>
 
-        <SudokuBoard />
+        {!state.isPaused ? (
+          <SudokuBoard />
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "#f0f0f0",
+              justifyContent: "center",
+              marginHorizontal: 5,
+              marginVertical: 20,
+              borderRadius: 10
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "JosefinSans-Regular",
+                fontSize: 28,
+                textAlign: "center"
+              }}
+            >
+              Tap Play To Resume!
+            </Text>
+          </View>
+        )}
+
         <View style={style.iconContainerStyle}>
           <View style={style.iconGroupStyle}>
             <Feather name="rotate-ccw" size={20} />
@@ -50,6 +77,7 @@ const GameScreen = () => {
             <Text style={style.iconTextStyle}>HINT</Text>
           </View>
         </View>
+
         <View style={{ alignItems: "center" }}>
           <FlatList
             style={{ width: 350 }}

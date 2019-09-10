@@ -11,6 +11,7 @@ import GameScreen from "./src/screens/GameScreen";
 import ChallengesScreen from "./src/screens/ChallengesScreen";
 import StatisticsScreen from "./src/screens/StatisticsScreen";
 import { Provider as FontProvider } from "./src/context/FontContext";
+import { Provider as GameProvider } from "./src/context/GameContext";
 
 const tabConfig = {
   iconStyle: {
@@ -79,6 +80,7 @@ const navigator = createStackNavigator(
     Game: GameScreen
   },
   {
+    initialRouteName: "Game",
     defaultNavigationOptions: {
       header: null
     }
@@ -91,7 +93,9 @@ export default () => {
   return (
     <PaperProvider>
       <FontProvider>
-        <App />
+        <GameProvider>
+          <App />
+        </GameProvider>
       </FontProvider>
     </PaperProvider>
   );

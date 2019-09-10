@@ -26,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
             <Feather
               name="play-circle"
               size={130}
-              style={{ color: "#2d2d2d" }}
+              style={{ color: "#5700a3" }}
             />
           </Button>
           <Button

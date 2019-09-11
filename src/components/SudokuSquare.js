@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Animated, Easing } from "react-native";
+import { Text, StyleSheet, Animated, Easing } from "react-native";
 
 class SudokuSquare extends Component {
   constructor(props) {
@@ -12,7 +12,6 @@ class SudokuSquare extends Component {
   }
 
   animate() {
-    this.animateValue.setValue(0);
     Animated.timing(this.animateValue, {
       toValue: 1,
       duration: 1000,

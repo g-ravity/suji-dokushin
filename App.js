@@ -80,7 +80,7 @@ const navigator = createStackNavigator(
     Game: GameScreen
   },
   {
-    initialRouteName: "Game",
+    // initialRouteName: "Game",
     defaultNavigationOptions: {
       header: null
     }

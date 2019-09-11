@@ -12,6 +12,7 @@
     "braces": "^3.0.2",
     "expo": "^34.0.1",
     "jest-haste-map": "^24.9.0",
+    "lodash": "^4.17.15",
     "micromatch": "^4.0.2",
     "react": "16.8.3",
     "react-dom": "^16.8.6",

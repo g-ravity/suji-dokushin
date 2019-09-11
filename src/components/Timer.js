@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Component } from "react";
 import { Text, StyleSheet } from "react-native";
 
 const convertSecondsToTime = seconds => {
@@ -16,24 +16,43 @@ const convertSecondsToTime = seconds => {
 
 let timer;
 
-const Timer = ({ isPaused }) => {
-  const [time, setTime] = useState(0);
+class Timer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 0
+    };
+  }
 
-  useEffect(() => {
-    if (!isPaused) updateTimer();
-    else stopTimer();
-  });
+  componentDidMount() {
+    this.updateTimer();
+  }
 
-  const updateTimer = () => {
-    timer = setTimeout(() => setTime(time + 1), 1000);
+  componentDidUpdate() {
+    if (!this.props.isPaused) {
+      clearTimeout(timer);
+      this.updateTimer();
+    } else clearTimeout(timer);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(timer);
+  }
+
+  updateTimer = () => {
+    timer = setTimeout(() => {
+      this.setState({ time: this.state.time + 1 });
+    }, 1000);
   };
 
-  const stopTimer = () => {
-    clearInterval(timer);
-  };
-
-  return <Text style={style.timerStyle}>{convertSecondsToTime(time)}</Text>;
-};
+  render() {
+    return (
+      <Text style={style.timerStyle}>
+        {convertSecondsToTime(this.state.time)}
+      </Text>
+    );
+  }
+}
 
 const style = StyleSheet.create({
   timerStyle: {

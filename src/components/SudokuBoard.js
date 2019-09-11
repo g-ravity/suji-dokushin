@@ -1,20 +1,98 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
+import _ from "lodash";
 
 import SudokuSquare from "./SudokuSquare";
 
+const shuffleList = () => {
+  return _.shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+};
+
+const arrayToGridList = arr => {
+  const gridList = [];
+  let gridRow = 1,
+    gridCount = 0,
+    count = 1,
+    k = 0;
+  while (gridRow <= 3) {
+    gridList.push([], [], []);
+    for (let i = gridRow * 3 - 3; i < gridRow * 3; i++) {
+      for (let j = count * 3 - 3; j < count * 3; j++)
+        gridList[gridCount][k++] = arr[i][j];
+      if (k === 9 && count < 3) {
+        k = 0;
+        gridCount++;
+        count++;
+        i = gridRow * 3 - 4;
+      }
+    }
+    gridCount++;
+    gridRow++;
+    count = 1;
+    k = 0;
+  }
+
+  return gridList;
+};
+
+const setupDiagonalGrids = arr => {
+  let k = 0;
+  while (k <= 6) {
+    let count = 0;
+    const grid = shuffleList();
+    for (let i = k; i < k + 3; i++) {
+      for (let j = k; j < k + 3; j++) arr[i][j] = grid[count++];
+    }
+    k += 3;
+  }
+};
+
 const generateSudoku = () => {
-  return [
-    [9, 8, 7, 6, 5, 4, 3, 2, 1],
-    [1, 3, 5, 7, 9, 2, 4, 6, 8],
-    [2, 4, 6, 8, 1, 3, 5, 7, 9],
-    [1, 9, 2, 8, 3, 7, 4, 6, 5],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    [1, 4, 7, 2, 3, 5, 8, 9, 6],
-    [2, 3, 6, 7, 9, 8, 1, 4, 5],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    [7, 5, 6, 4, 3, 1, 2, 8, 9]
-  ];
+  const arr = [];
+  let i, j;
+  for (i = 0; i < 9; i++) {
+    arr.push([]);
+    for (j = 0; j < 9; j++) arr[i].push(0);
+  }
+
+  setupDiagonalGrids(arr);
+
+  const stack = [];
+  for (i = 0; i < 9; i++) {
+    for (j = 0; j < 9; j++) {
+      if (arr[i][j] === 0) {
+        let isAllowed = false;
+        while (!isAllowed) {
+          const rowArr = [];
+          const colArr = [];
+          const gridArr = [];
+          for (num = 0; num < 9; num++) rowArr.push(arr[i][num]);
+          for (num = 0; num < 9; num++) colArr.push(arr[num][j]);
+          const rowNum = Math.floor(i / 3) * 3;
+          const colNum = Math.floor(j / 3) * 3;
+          for (row = rowNum; row < rowNum + 3; row++) {
+            for (col = colNum; col < colNum + 3; col++)
+              gridArr.push(arr[row][col]);
+          }
+          if (arr[i][j] < 9) {
+            arr[i][j]++;
+            isAllowed =
+              !rowArr.includes(arr[i][j]) &&
+              !colArr.includes(arr[i][j]) &&
+              !gridArr.includes(arr[i][j]);
+            if (isAllowed) stack.push({ row: i, col: j });
+          } else {
+            arr[i][j] = 0;
+            const prevCell = stack.pop();
+            i = prevCell.row;
+            j = prevCell.col;
+          }
+        }
+      }
+    }
+  }
+
+  return arrayToGridList(arr);
 };
 
 const SudokuBoard = () => {

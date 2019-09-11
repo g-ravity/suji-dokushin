@@ -1,9 +1,27 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { Component } from "react";
+import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 
-const SudokuSquare = ({ numberList }) => {
+class SudokuSquare extends Component {
+  constructor(props) {
+    super(props);
+    this.animateValue = new Animated.Value(0);
+  }
+
+  componentDidMount() {
+    this.animate();
+  }
+
+  animate() {
+    this.animateValue.setValue(0);
+    Animated.timing(this.animateValue, {
+      toValue: 1,
+      duration: 1000,
+      easing: Easing.cubic
+    }).start();
+  }
+
   renderGrid = () => {
-    return numberList.map((num, index) => {
+    return this.props.numberList.map((num, index) => {
       let inlineStyle = {};
       if (index >= 6) inlineStyle.borderBottomWidth = 0;
       if ((index + 1) % 3 === 0) inlineStyle.borderRightWidth = 0;
@@ -14,9 +32,22 @@ const SudokuSquare = ({ numberList }) => {
       );
     });
   };
-
-  return <View style={style.boxStyle}>{renderGrid()}</View>;
-};
+  render() {
+    const height = this.animateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0%", "32%"]
+    });
+    const opacity = this.animateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1]
+    });
+    return (
+      <Animated.View style={{ ...style.boxStyle, height, opacity }}>
+        {this.renderGrid()}
+      </Animated.View>
+    );
+  }
+}
 
 const style = StyleSheet.create({
   boxStyle: {
@@ -26,8 +57,7 @@ const style = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     flexWrap: "wrap",
-    flexBasis: "30%",
-    height: "32%"
+    flexBasis: "30%"
   },
   numberStyle: {
     flex: 1,

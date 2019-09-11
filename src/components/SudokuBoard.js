@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 import _ from "lodash";
 
 import SudokuSquare from "./SudokuSquare";
@@ -96,14 +97,34 @@ const generateSudoku = () => {
 };
 
 const SudokuBoard = () => {
-  const [sudoku] = useState(generateSudoku());
+  const [sudoku, setSudoku] = useState([]);
+  const [loading, setLoader] = useState(true);
+
+  useEffect(() => {
+    setSudoku(generateSudoku());
+    setLoader(false);
+  }, []);
 
   renderSquares = () =>
     sudoku.map((numList, index) => (
       <SudokuSquare numberList={numList} key={index} />
     ));
 
-  return <View style={style.sudokuContainerStyle}>{renderSquares()}</View>;
+  return (
+    <View style={style.sudokuContainerStyle}>
+      {loading ? (
+        <Button
+          mode="text"
+          color="2d2d2d"
+          loading
+          uppercase={false}
+          disabled
+        ></Button>
+      ) : (
+        renderSquares()
+      )}
+    </View>
+  );
 };
 
 const style = StyleSheet.create({
@@ -112,7 +133,9 @@ const style = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: 5,
     flexDirection: "row",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 

@@ -36,7 +36,7 @@ class SudokuSquare extends Component {
       return (
         <TouchableWithoutFeedback
           key={index}
-          onPress={() => this.props.onCellSelect(this.props.grid, index)}
+          onPressIn={() => this.props.onCellSelect(this.props.grid, index)}
         >
           <Text style={{ ...style.numberStyle, ...inlineStyle }}>
             {elem.visible ? elem.value : ""}

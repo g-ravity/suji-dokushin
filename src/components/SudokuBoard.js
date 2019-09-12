@@ -227,8 +227,6 @@ const SudokuBoard = ({ visibleElements }) => {
 const style = StyleSheet.create({
   sudokuContainerStyle: {
     flex: 1,
-    marginVertical: 20,
-    marginHorizontal: 5,
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",

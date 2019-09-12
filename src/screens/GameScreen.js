@@ -1,5 +1,12 @@
 import React, { useContext } from "react";
-import { View, StyleSheet, Text, StatusBar, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  StatusBar,
+  FlatList,
+  TouchableWi
+} from "react-native";
 
 import { Context as GameContext } from "../context/GameContext";
 import Header from "../components/Header";
@@ -19,30 +26,31 @@ const GameScreen = ({ navigation }) => {
         <Text style={style.textStyle}>0/3</Text>
       </View>
 
-      {!state.isPaused ? (
+      <View style={style.playAreaStyle}>
         <SudokuBoard visibleElements={visible} />
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "#f0f0f0",
-            justifyContent: "center",
-            marginHorizontal: 5,
-            marginVertical: 20,
-            borderRadius: 10
-          }}
-        >
-          <Text
+        {state.isPaused && (
+          <View
             style={{
-              fontFamily: "JosefinSans-Regular",
-              fontSize: 28,
-              textAlign: "center"
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#f0f0f0",
+              justifyContent: "center",
+              borderRadius: 10
             }}
           >
-            Tap Play To Resume!
-          </Text>
-        </View>
-      )}
+            <Text
+              style={{
+                fontFamily: "JosefinSans-Regular",
+                fontSize: 28,
+                textAlign: "center"
+              }}
+            >
+              Tap Play To Resume!
+            </Text>
+          </View>
+        )}
+      </View>
 
       <View style={style.iconContainerStyle}>
         <Icon icon="rotate-ccw" text="UNDO" />
@@ -94,6 +102,7 @@ const style = StyleSheet.create({
     fontSize: 15,
     color: "#ffffff"
   },
+  playAreaStyle: { flex: 1, marginVertical: 20, marginHorizontal: 5 },
   iconContainerStyle: {
     flexDirection: "row",
     justifyContent: "space-between",

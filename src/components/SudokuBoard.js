@@ -42,10 +42,40 @@ const setupDiagonalGrids = arr => {
     let count = 0;
     const grid = shuffleList();
     for (let i = k; i < k + 3; i++) {
-      for (let j = k; j < k + 3; j++) arr[i][j] = grid[count++];
+      for (let j = k; j < k + 3; j++) arr[i][j].value = grid[count++];
     }
     k += 3;
   }
+};
+
+hideElements = (arr, visible) => {
+  for (let i = 0; i < 9; i++) {
+    let num;
+    if (i === 8) num = visible;
+    else {
+      let maxAllowed = false,
+        numAllowed = false,
+        max = 6;
+      while (!maxAllowed) {
+        if (Math.floor((visible - max) / (8 - i)) >= 1) maxAllowed = true;
+        else max--;
+      }
+      num = Math.floor(Math.random() * max) + 1;
+      while (!numAllowed) {
+        if (Math.ceil((visible - num) / (8 - i)) <= 6) {
+          numAllowed = true;
+          visible -= num;
+        } else num++;
+      }
+    }
+
+    const index = shuffleList();
+    for (let j = 0; j < num; j++) {
+      arr[i][index[j] - 1].visible = true;
+    }
+  }
+
+  return arr;
 };
 
 const generateSudoku = () => {
@@ -53,7 +83,7 @@ const generateSudoku = () => {
   let i, j;
   for (i = 0; i < 9; i++) {
     arr.push([]);
-    for (j = 0; j < 9; j++) arr[i].push(0);
+    for (j = 0; j < 9; j++) arr[i].push({ value: 0, visible: false });
   }
 
   setupDiagonalGrids(arr);
@@ -61,29 +91,29 @@ const generateSudoku = () => {
   const stack = [];
   for (i = 0; i < 9; i++) {
     for (j = 0; j < 9; j++) {
-      if (arr[i][j] === 0) {
+      if (arr[i][j].value === 0) {
         let isAllowed = false;
         while (!isAllowed) {
           const rowArr = [];
           const colArr = [];
           const gridArr = [];
-          for (num = 0; num < 9; num++) rowArr.push(arr[i][num]);
-          for (num = 0; num < 9; num++) colArr.push(arr[num][j]);
+          for (num = 0; num < 9; num++) rowArr.push(arr[i][num].value);
+          for (num = 0; num < 9; num++) colArr.push(arr[num][j].value);
           const rowNum = Math.floor(i / 3) * 3;
           const colNum = Math.floor(j / 3) * 3;
           for (row = rowNum; row < rowNum + 3; row++) {
             for (col = colNum; col < colNum + 3; col++)
-              gridArr.push(arr[row][col]);
+              gridArr.push(arr[row][col].value);
           }
-          if (arr[i][j] < 9) {
-            arr[i][j]++;
+          if (arr[i][j].value < 9) {
+            arr[i][j].value++;
             isAllowed =
-              !rowArr.includes(arr[i][j]) &&
-              !colArr.includes(arr[i][j]) &&
-              !gridArr.includes(arr[i][j]);
+              !rowArr.includes(arr[i][j].value) &&
+              !colArr.includes(arr[i][j].value) &&
+              !gridArr.includes(arr[i][j].value);
             if (isAllowed) stack.push({ row: i, col: j });
           } else {
-            arr[i][j] = 0;
+            arr[i][j].value = 0;
             const prevCell = stack.pop();
             i = prevCell.row;
             j = prevCell.col;
@@ -96,12 +126,13 @@ const generateSudoku = () => {
   return arrayToGridList(arr);
 };
 
-const SudokuBoard = () => {
+const SudokuBoard = ({ visibleElements }) => {
   const [sudoku, setSudoku] = useState([]);
   const [loading, setLoader] = useState(true);
 
   useEffect(() => {
-    setSudoku(generateSudoku());
+    const sudoku = generateSudoku();
+    setSudoku(hideElements(sudoku, visibleElements));
     setLoader(false);
   }, []);
 

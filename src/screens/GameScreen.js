@@ -6,20 +6,21 @@ import Header from "../components/Header";
 import SudokuBoard from "../components/SudokuBoard";
 import Icon from "../components/Icon";
 
-const GameScreen = () => {
+const GameScreen = ({ navigation }) => {
   const { state } = useContext(GameContext);
+  const { level, visible } = navigation.getParam("gameLevel");
 
   return (
     <View style={{ flex: 1 }}>
       <StatusBar hidden={false} barStyle="light-content" />
 
       <View style={style.containerStyle}>
-        <Text style={style.textStyle}>EASY</Text>
+        <Text style={style.textStyle}>{level.toUpperCase()}</Text>
         <Text style={style.textStyle}>0/3</Text>
       </View>
 
       {!state.isPaused ? (
-        <SudokuBoard />
+        <SudokuBoard visibleElements={visible} />
       ) : (
         <View
           style={{

@@ -87,7 +87,7 @@ const HomeScreen = ({ navigation }) => {
                   onPress={() => {
                     setShowModal(false);
                     navigation.navigate("Game", {
-                      visibleElements: item.visible
+                      gameLevel: item
                     });
                   }}
                   color="#2d2d2d"

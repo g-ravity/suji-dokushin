@@ -20,13 +20,13 @@ class SudokuSquare extends Component {
   }
 
   renderGrid = () => {
-    return this.props.numberList.map((num, index) => {
+    return this.props.numberList.map((elem, index) => {
       let inlineStyle = {};
       if (index >= 6) inlineStyle.borderBottomWidth = 0;
       if ((index + 1) % 3 === 0) inlineStyle.borderRightWidth = 0;
       return (
         <Text key={index} style={{ ...style.numberStyle, ...inlineStyle }}>
-          {num}
+          {elem.visible ? elem.value : ""}
         </Text>
       );
     });

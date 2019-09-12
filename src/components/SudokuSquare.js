@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, Animated, Easing } from "react-native";
+import {
+  Text,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Animated,
+  Easing
+} from "react-native";
 
 class SudokuSquare extends Component {
   constructor(props) {
@@ -22,12 +28,20 @@ class SudokuSquare extends Component {
   renderGrid = () => {
     return this.props.numberList.map((elem, index) => {
       let inlineStyle = {};
+      if (elem.highlight) inlineStyle.backgroundColor = "#dbdbdb";
+      if (elem.numberHighlight) inlineStyle.backgroundColor = "#bababa";
+      if (elem.currentHighlight) inlineStyle.backgroundColor = "#d7c9ff";
       if (index >= 6) inlineStyle.borderBottomWidth = 0;
       if ((index + 1) % 3 === 0) inlineStyle.borderRightWidth = 0;
       return (
-        <Text key={index} style={{ ...style.numberStyle, ...inlineStyle }}>
-          {elem.visible ? elem.value : ""}
-        </Text>
+        <TouchableWithoutFeedback
+          key={index}
+          onPress={() => this.props.onCellSelect(this.props.grid, index)}
+        >
+          <Text style={{ ...style.numberStyle, ...inlineStyle }}>
+            {elem.visible ? elem.value : ""}
+          </Text>
+        </TouchableWithoutFeedback>
       );
     });
   };

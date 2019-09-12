@@ -78,12 +78,41 @@ hideElements = (arr, visible) => {
   return arr;
 };
 
+calculateRow = (arr, row) => {
+  const rowArr = [];
+  for (let num = 0; num < 9; num++) rowArr.push(arr[row][num].value);
+  return rowArr;
+};
+
+calculateColumn = (arr, col) => {
+  const colArr = [];
+  for (let num = 0; num < 9; num++) colArr.push(arr[num][col].value);
+  return colArr;
+};
+
+calculateGrid = (arr, row, col) => {
+  const gridArr = [];
+  const rowNum = Math.floor(row / 3) * 3;
+  const colNum = Math.floor(col / 3) * 3;
+  for (let i = rowNum; i < rowNum + 3; i++) {
+    for (let j = colNum; j < colNum + 3; j++) gridArr.push(arr[i][j].value);
+  }
+  return gridArr;
+};
+
 const generateSudoku = () => {
   const arr = [];
   let i, j;
   for (i = 0; i < 9; i++) {
     arr.push([]);
-    for (j = 0; j < 9; j++) arr[i].push({ value: 0, visible: false });
+    for (j = 0; j < 9; j++)
+      arr[i].push({
+        value: 0,
+        visible: false,
+        highlight: false,
+        currentHighlight: false,
+        numberHighlight: false
+      });
   }
 
   setupDiagonalGrids(arr);
@@ -94,17 +123,9 @@ const generateSudoku = () => {
       if (arr[i][j].value === 0) {
         let isAllowed = false;
         while (!isAllowed) {
-          const rowArr = [];
-          const colArr = [];
-          const gridArr = [];
-          for (num = 0; num < 9; num++) rowArr.push(arr[i][num].value);
-          for (num = 0; num < 9; num++) colArr.push(arr[num][j].value);
-          const rowNum = Math.floor(i / 3) * 3;
-          const colNum = Math.floor(j / 3) * 3;
-          for (row = rowNum; row < rowNum + 3; row++) {
-            for (col = colNum; col < colNum + 3; col++)
-              gridArr.push(arr[row][col].value);
-          }
+          const rowArr = calculateRow(arr, i);
+          const colArr = calculateColumn(arr, j);
+          const gridArr = calculateGrid(arr, i, j);
           if (arr[i][j].value < 9) {
             arr[i][j].value++;
             isAllowed =
@@ -126,6 +147,16 @@ const generateSudoku = () => {
   return arrayToGridList(arr);
 };
 
+clearHighLlights = arr => {
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      arr[i][j].highlight = arr[i][j].numberHighlight = arr[i][
+        j
+      ].currentHighlight = false;
+    }
+  }
+};
+
 const SudokuBoard = ({ visibleElements }) => {
   const [sudoku, setSudoku] = useState([]);
   const [loading, setLoader] = useState(true);
@@ -136,9 +167,44 @@ const SudokuBoard = ({ visibleElements }) => {
     setLoader(false);
   }, []);
 
+  onCellSelect = (grid, index) => {
+    highlightedSudoku = arrayToGridList(sudoku);
+    clearHighLlights(highlightedSudoku);
+    const row = Math.floor(grid / 3) * 3 + Math.floor(index / 3);
+    const col = (grid % 3) * 3 + (index % 3);
+    highlightedSudoku[row][col].currentHighlight = true;
+    if (highlightedSudoku[row][col].visible) {
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++)
+          if (
+            highlightedSudoku[i][j].value ===
+              highlightedSudoku[row][col].value &&
+            highlightedSudoku[i][j].visible
+          )
+            highlightedSudoku[i][j].numberHighlight = true;
+      }
+    }
+    for (let num = 0; num < 9; num++) {
+      highlightedSudoku[row][num].highlight = true;
+      highlightedSudoku[num][col].highlight = true;
+    }
+    const rowNum = Math.floor(row / 3) * 3;
+    const colNum = Math.floor(col / 3) * 3;
+    for (let i = rowNum; i < rowNum + 3; i++) {
+      for (let j = colNum; j < colNum + 3; j++)
+        highlightedSudoku[i][j].highlight = true;
+    }
+    setSudoku(arrayToGridList(highlightedSudoku));
+  };
+
   renderSquares = () =>
     sudoku.map((numList, index) => (
-      <SudokuSquare numberList={numList} key={index} />
+      <SudokuSquare
+        numberList={numList}
+        key={index}
+        grid={index}
+        onCellSelect={onCellSelect}
+      />
     ));
 
   return (

@@ -20,7 +20,7 @@ class Timer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      time: 0
+      seconds: 0
     };
   }
 
@@ -41,14 +41,14 @@ class Timer extends Component {
 
   updateTimer = () => {
     timer = setTimeout(() => {
-      this.setState({ time: this.state.time + 1 });
+      this.setState({ seconds: this.state.seconds + 1 });
     }, 1000);
   };
 
   render() {
     return (
       <Text style={style.timerStyle}>
-        {convertSecondsToTime(this.state.time)}
+        {convertSecondsToTime(this.state.seconds)}
       </Text>
     );
   }

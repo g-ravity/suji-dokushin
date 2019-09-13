@@ -1,12 +1,5 @@
 import React, { useContext } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  StatusBar,
-  FlatList,
-  TouchableWi
-} from "react-native";
+import { View, StyleSheet, Text, StatusBar, FlatList } from "react-native";
 
 import { Context as GameContext } from "../context/GameContext";
 import Header from "../components/Header";
@@ -14,7 +7,8 @@ import SudokuBoard from "../components/SudokuBoard";
 import Icon from "../components/Icon";
 
 const GameScreen = ({ navigation }) => {
-  const { state } = useContext(GameContext);
+  const { state, onNumberSelect } = useContext(GameContext);
+
   const { level, visible } = navigation.getParam("gameLevel");
 
   return (
@@ -75,9 +69,12 @@ const GameScreen = ({ navigation }) => {
           data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
           keyExtractor={num => `Key-${num}`}
           renderItem={({ item }) => (
-            <View style={style.numberContainerStyle}>
-              <Text style={style.numberTextStyle}>{item}</Text>
-            </View>
+            <Text
+              style={style.numberStyle}
+              onPress={() => onNumberSelect(item)}
+            >
+              {item}
+            </Text>
           )}
         />
       </View>
@@ -109,16 +106,14 @@ const style = StyleSheet.create({
     margin: 20,
     marginTop: 0
   },
-  numberContainerStyle: {
+  numberStyle: {
     backgroundColor: "#5700a3",
     width: 35,
     height: 60,
-    alignItems: "center",
+    textAlign: "center",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    marginHorizontal: 2
-  },
-  numberTextStyle: {
+    marginHorizontal: 2,
     color: "#ffffff",
     fontFamily: "JosefinSans-Regular",
     fontSize: 30

@@ -12,6 +12,7 @@ import ChallengesScreen from "./src/screens/ChallengesScreen";
 import StatisticsScreen from "./src/screens/StatisticsScreen";
 import { Provider as FontProvider } from "./src/context/FontContext";
 import { Provider as GameProvider } from "./src/context/GameContext";
+import { Provider as TimerProvider } from "./src/context/TimerContext";
 
 const tabConfig = {
   iconStyle: {
@@ -92,9 +93,11 @@ export default () => {
   return (
     <PaperProvider>
       <FontProvider>
-        <GameProvider>
-          <App />
-        </GameProvider>
+        <TimerProvider>
+          <GameProvider>
+            <App />
+          </GameProvider>
+        </TimerProvider>
       </FontProvider>
     </PaperProvider>
   );

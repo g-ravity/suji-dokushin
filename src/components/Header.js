@@ -1,23 +1,45 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import SafeAreaView from "react-native-safe-area-view";
 import { withNavigation } from "react-navigation";
 
 import { Context as GameContext } from "../context/GameContext";
-import Timer from "./Timer";
+import { Context as TimerContext } from "../context/TimerContext";
+import { convertSecondsToTime } from "../utils";
 
 const Header = ({ navigation }) => {
-  const { state, pauseGame, resumeGame } = useContext(GameContext);
+  const { state: gameState, pauseGame, resumeGame } = useContext(GameContext);
+  const { state: timerState, startTimer, stopTimer, resetTime } = useContext(
+    TimerContext
+  );
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      stopTimer();
+      resetTime();
+    };
+  }, []);
 
   renderButton = () => {
-    return state.isPaused ? (
-      <Button onPress={resumeGame}>
+    return gameState.isPaused ? (
+      <Button
+        onPress={() => {
+          startTimer();
+          resumeGame();
+        }}
+      >
         <Feather name="play" size={30} style={{ color: "#ffffff" }} />
       </Button>
     ) : (
-      <Button onPress={pauseGame}>
+      <Button
+        onPress={() => {
+          stopTimer();
+          pauseGame();
+        }}
+      >
         <Feather name="pause" size={30} style={{ color: "#ffffff" }} />
       </Button>
     );
@@ -28,7 +50,7 @@ const Header = ({ navigation }) => {
       <Button onPress={() => navigation.pop()}>
         <Feather name="arrow-left" size={30} style={{ color: "#ffffff" }} />
       </Button>
-      <Timer isPaused={state.isPaused} />
+      <Text style={style.timerStyle}>{convertSecondsToTime(timerState)}</Text>
       {renderButton()}
     </SafeAreaView>
   );
@@ -41,6 +63,11 @@ const style = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  timerStyle: {
+    color: "#ffffff",
+    fontSize: 28,
+    fontFamily: "JosefinSans-Regular"
   }
 });
 

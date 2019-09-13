@@ -1,17 +1,25 @@
 import React, { Component } from "react";
-import {
-  Text,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Animated,
-  Easing
-} from "react-native";
+import { Text, StyleSheet, Animated, Easing } from "react-native";
+
+import { Context as GameContext } from "../context/GameContext";
+
+const configureStyle = (elem, index) => {
+  let style = {};
+  if (elem.highlight) style.backgroundColor = "#dbdbdb";
+  if (elem.numberHighlight) style.backgroundColor = "#bababa";
+  if (elem.currentHighlight) style.backgroundColor = "#d7c9ff";
+  if (index >= 6) style.borderBottomWidth = 0;
+  if ((index + 1) % 3 === 0) style.borderRightWidth = 0;
+  return style;
+};
 
 class SudokuSquare extends Component {
   constructor(props) {
     super(props);
     this.animateValue = new Animated.Value(0);
   }
+
+  static contextType = GameContext;
 
   componentDidMount() {
     this.animate();
@@ -20,31 +28,79 @@ class SudokuSquare extends Component {
   animate() {
     Animated.timing(this.animateValue, {
       toValue: 1,
-      duration: 1000,
+      duration: 600,
       easing: Easing.cubic
     }).start();
   }
 
+  renderUserInput = index => {
+    const { numberInputList } = this.context.state;
+    for (cur of numberInputList) {
+      if (cur.grid === this.props.grid && cur.index === index) {
+        return cur.number;
+      }
+    }
+    return "";
+  };
+
+  renderHighlights = arr => {
+    const { currentCell } = this.context.state;
+
+    if (!currentCell) return;
+
+    for (i = 0; i < 9; i++) {
+      arr[i].highlight = arr[i].currentHighlight = arr[
+        i
+      ].numberHighlight = false;
+    }
+
+    for (i = 0; i < 9; i++) {
+      if (
+        currentCell.elem.visible &&
+        arr[i].value === currentCell.elem.value &&
+        arr[i].visible
+      )
+        arr[i].numberHighlight = true;
+    }
+
+    if (this.props.grid === currentCell.grid) {
+      for (let i = 0; i < 9; i++) {
+        arr[i].highlight = true;
+        if (i === currentCell.index) arr[i].currentHighlight = true;
+      }
+    } else {
+      if (this.props.grid % 3 === currentCell.grid % 3) {
+        for (let i = 0; i < 9; i++) {
+          if (i % 3 === currentCell.index % 3) arr[i].highlight = true;
+        }
+      }
+      if (
+        Math.floor(this.props.grid / 3) === Math.floor(currentCell.grid / 3)
+      ) {
+        for (let i = 0; i < 9; i++) {
+          if (Math.floor(i / 3) === Math.floor(currentCell.index / 3))
+            arr[i].highlight = true;
+        }
+      }
+    }
+  };
+
   renderGrid = () => {
+    this.renderHighlights(this.props.numberList);
     return this.props.numberList.map((elem, index) => {
-      let inlineStyle = {};
-      if (elem.highlight) inlineStyle.backgroundColor = "#dbdbdb";
-      if (elem.numberHighlight) inlineStyle.backgroundColor = "#bababa";
-      if (elem.currentHighlight) inlineStyle.backgroundColor = "#d7c9ff";
-      if (index >= 6) inlineStyle.borderBottomWidth = 0;
-      if ((index + 1) % 3 === 0) inlineStyle.borderRightWidth = 0;
+      const inlineStyle = configureStyle(elem, index);
       return (
-        <TouchableWithoutFeedback
+        <Text
+          style={{ ...style.numberStyle, ...inlineStyle }}
           key={index}
-          onPressIn={() => this.props.onCellSelect(this.props.grid, index)}
+          onPress={() => this.context.selectCell(this.props.grid, index, elem)}
         >
-          <Text style={{ ...style.numberStyle, ...inlineStyle }}>
-            {elem.visible ? elem.value : ""}
-          </Text>
-        </TouchableWithoutFeedback>
+          {elem.visible ? elem.value : this.renderUserInput(index)}
+        </Text>
       );
     });
   };
+
   render() {
     const height = this.animateValue.interpolate({
       inputRange: [0, 1],

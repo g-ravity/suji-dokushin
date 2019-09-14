@@ -1,18 +1,23 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-const Icon = ({ icon, text, labelStyle }) => {
+const Icon = ({ icon, text, labelStyle, onPress, disabled }) => {
+  const inlineStyle = {};
+  if (disabled) inlineStyle.opacity = 0.5;
   return (
-    <View style={style.iconGroupStyle}>
-      <Feather name={icon} size={20} />
-      <Text style={{ ...style.iconTextStyle, ...labelStyle }}>{text}</Text>
-    </View>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <View style={{ ...style.iconGroupStyle, ...inlineStyle }}>
+        <Feather name={icon} size={20} />
+        <Text style={{ ...style.iconTextStyle, ...labelStyle }}>{text}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 Icon.defaultProps = {
-  labelStyle: null
+  labelStyle: null,
+  disabled: false
 };
 
 const style = StyleSheet.create({

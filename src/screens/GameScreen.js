@@ -7,7 +7,14 @@ import SudokuBoard from "../components/SudokuBoard";
 import Icon from "../components/Icon";
 
 const GameScreen = ({ navigation }) => {
-  const { state, onNumberSelect, resetGame } = useContext(GameContext);
+  const {
+    state,
+    onNumberSelect,
+    resetGame,
+    undoAction,
+    deleteAction,
+    hintAction
+  } = useContext(GameContext);
 
   const { level, visible } = navigation.getParam("gameLevel");
 
@@ -49,8 +56,13 @@ const GameScreen = ({ navigation }) => {
       </View>
 
       <View style={style.iconContainerStyle}>
-        <Icon icon="rotate-ccw" text="UNDO" />
-        <Icon icon="trash" text="DELETE" />
+        <Icon
+          icon="rotate-ccw"
+          text="UNDO"
+          onPress={undoAction}
+          disabled={!state.isUndoLeft}
+        />
+        <Icon icon="trash" text="DELETE" onPress={deleteAction} />
         <Icon
           icon="edit-2"
           text="ON"
@@ -60,7 +72,12 @@ const GameScreen = ({ navigation }) => {
             paddingHorizontal: 7
           }}
         />
-        <Icon icon="zap" text="HINT" />
+        <Icon
+          icon="zap"
+          text="HINT"
+          onPress={hintAction}
+          disabled={!state.hintsLeft}
+        />
       </View>
 
       <View style={{ alignItems: "center" }}>

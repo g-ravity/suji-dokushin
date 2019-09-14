@@ -32,8 +32,10 @@ const GameScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <View style={style.containerStyle}>
         <Text style={style.textStyle}>{level.toUpperCase()}</Text>
-        <Text style={style.textStyle}>0/3</Text>
+        <Text style={style.textStyle}>ERRORS: {state.errors}/3</Text>
       </View>
+
+      {state.gameOver && <Text>Game Over</Text>}
 
       <View style={style.playAreaStyle}>
         <SudokuBoard visibleElements={visible} />
@@ -69,20 +71,13 @@ const GameScreen = ({ navigation }) => {
           disabled={!state.isUndoLeft}
         />
         <Icon icon="trash" text="DELETE" onPress={deleteAction} />
-        <Icon
-          icon="edit-2"
-          text="ON"
-          labelStyle={{
-            backgroundColor: "#2d2d2d",
-            color: "#ffffff",
-            paddingHorizontal: 7
-          }}
-        />
+        <Icon icon="edit-2" text="PENCIL" badge="ON" />
         <Icon
           icon="zap"
           text="HINT"
           onPress={hintAction}
           disabled={!state.hintsLeft}
+          badge={state.hintsLeft}
         />
       </View>
 

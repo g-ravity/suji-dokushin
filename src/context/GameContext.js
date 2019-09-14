@@ -1,4 +1,5 @@
 import createDataContext from "./createDataContext";
+import { checkSudokuResult } from "../utils";
 
 const getRowAndCol = cell => {
   const { grid, index } = cell;
@@ -20,7 +21,9 @@ const gameReducer = (state, action) => {
         userInputList: [],
         sudoku: [],
         hintsLeft: 3,
-        isUndoLeft: false
+        isUndoLeft: false,
+        errors: 0,
+        gameOver: false
       };
     case "cell_selected":
       return { ...state, currentCell: action.payload };
@@ -30,16 +33,19 @@ const gameReducer = (state, action) => {
       const prevValue = state.sudoku[row][col].inputValue;
       if (prevValue === action.payload) action.payload = "";
       const sudoku = [...state.sudoku];
+      let errors = state.errors;
       sudoku[row][col].inputValue = action.payload;
-      const userInputList = [
-        ...state.userInputList,
-        { ...state.currentCell, value: action.payload }
-      ];
+      if (sudoku[row][col].inputValue !== sudoku[row][col].value) errors += 1;
       return {
         ...state,
-        userInputList,
+        userInputList: [
+          ...state.userInputList,
+          { ...state.currentCell, value: action.payload }
+        ],
         sudoku,
-        isUndoLeft: Boolean(userInputList.length)
+        errors,
+        gameOver: errors === 3 || checkSudokuResult(sudoku),
+        isUndoLeft: true
       };
     }
     case "store_sudoku":
@@ -70,17 +76,15 @@ const gameReducer = (state, action) => {
     case "delete": {
       const { row, col } = getRowAndCol(state.currentCell);
       const sudoku = [...state.sudoku];
-      if (!sudoku[row][col].visible) {
+      if (!sudoku[row][col].visible && sudoku[row][col].inputValue) {
         sudoku[row][col].inputValue = "";
-        const userInputList = [
-          ...state.userInputList,
-          { ...state.currentCell, value: "" }
-        ];
         return {
           ...state,
           sudoku,
-          userInputList,
-          isUndoLeft: Boolean(userInputList.length)
+          userInputList: [
+            ...state.userInputList,
+            { ...state.currentCell, value: "" }
+          ]
         };
       }
       return state;
@@ -128,6 +132,8 @@ export const { Context, Provider } = createDataContext(
     userInputList: [],
     sudoku: [],
     hintsLeft: 3,
-    isUndoLeft: false
+    isUndoLeft: false,
+    errors: 0,
+    gameOver: false
   }
 );

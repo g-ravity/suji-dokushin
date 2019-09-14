@@ -12,13 +12,16 @@ const HomeScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    const navListener = navigation.addListener("didFocus", () =>
+      StatusBar.setBarStyle("dark-content")
+    );
     loadFont();
+    return () => navListener.remove();
   }, []);
 
   return (
     state.fontLoaded && (
       <SafeAreaView forceInset={{ top: "always" }} style={{ flex: 1 }}>
-        <StatusBar hidden={false} barStyle="dark-content" />
         <View style={style.containerStyle}>
           <View style={{ alignItems: "center" }}>
             <Text style={style.subHeaderStyle}>Sūji</Text>

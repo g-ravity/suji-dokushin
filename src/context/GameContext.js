@@ -18,7 +18,9 @@ const gameReducer = (state, action) => {
         isPaused: false,
         currentCell: { grid: 0, index: 0 },
         userInputList: [],
-        sudoku: []
+        sudoku: [],
+        hintsLeft: 3,
+        isUndoLeft: false
       };
     case "cell_selected":
       return { ...state, currentCell: action.payload };

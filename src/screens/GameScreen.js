@@ -18,12 +18,18 @@ const GameScreen = ({ navigation }) => {
 
   const { level, visible } = navigation.getParam("gameLevel");
 
-  useEffect(() => () => resetGame(), []);
+  useEffect(() => {
+    const navListener = navigation.addListener("didFocus", () =>
+      StatusBar.setBarStyle("light-content")
+    );
+    return () => {
+      navListener.remove();
+      resetGame();
+    };
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar hidden={false} barStyle="light-content" />
-
       <View style={style.containerStyle}>
         <Text style={style.textStyle}>{level.toUpperCase()}</Text>
         <Text style={style.textStyle}>0/3</Text>

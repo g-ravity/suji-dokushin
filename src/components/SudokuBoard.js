@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
 import SudokuSquare from "./SudokuSquare";
-import { generateSudoku, hideSudokuCells } from "../utils";
+import { Context as GameContext } from "../context/GameContext";
+import { generateSudoku, hideSudokuCells, arrayToGridList } from "../utils";
 
 const SudokuBoard = ({ visibleElements }) => {
-  const [sudoku, setSudoku] = useState([]);
+  const { state, storeSudoku } = useContext(GameContext);
   const [loading, setLoader] = useState(true);
 
   useEffect(() => {
-    const sudoku = generateSudoku();
-    hideSudokuCells(sudoku, visibleElements);
-    setSudoku(sudoku);
+    let sudoku = generateSudoku();
+    sudoku = hideSudokuCells(sudoku, visibleElements);
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (!sudoku[i][j].visible) sudoku[i][j].inputValue = "";
+      }
+    }
+    storeSudoku(sudoku);
     setLoader(false);
   }, []);
 
   renderSquares = () => {
-    return sudoku.map((numList, index) => (
+    const sudokuGrid = arrayToGridList(state.sudoku);
+    return sudokuGrid.map((numList, index) => (
       <SudokuSquare numberList={numList} key={index} grid={index} />
     ));
   };

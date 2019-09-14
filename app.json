@@ -4,7 +4,11 @@
     "slug": "suji-dokushin",
     "privacy": "public",
     "sdkVersion": "34.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,9 +20,17 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gravity.sujidokushin"
+    },
+    "android": {
+      "package": "com.gravity.sujidokushin"
+    },
+    "description": "The authentic Japanese Sudoku game, made as a learning project for React Native",
+    "githubUrl": "https://github.com/g-ravity/suji-dokushin"
   }
 }

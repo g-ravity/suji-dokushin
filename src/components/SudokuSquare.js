@@ -7,9 +7,31 @@ const configureStyle = (elem, index) => {
   let style = {};
   if (elem.highlight) style.backgroundColor = "#dbdbdb";
   if (elem.numberHighlight) style.backgroundColor = "#bababa";
-  if (elem.currentHighlight) style.backgroundColor = "#d7c9ff";
+  if (elem.currentHighlight) {
+    if (elem.inputValue && elem.value !== elem.inputValue)
+      style.backgroundColor = "#ffc2fa";
+    else style.backgroundColor = "#d7c9ff";
+  }
+  if (elem.inputValue) {
+    if (elem.value === elem.inputValue) style.color = "#6400bd";
+    else style.color = "#eb4034";
+  }
   if (index >= 6) style.borderBottomWidth = 0;
   if ((index + 1) % 3 === 0) style.borderRightWidth = 0;
+  switch (index) {
+    case 0:
+      style.borderTopLeftRadius = 10;
+      break;
+    case 2:
+      style.borderTopRightRadius = 10;
+      break;
+    case 6:
+      style.borderBottomLeftRadius = 10;
+      break;
+    case 8:
+      style.borderBottomRightRadius = 10;
+      break;
+  }
   return style;
 };
 
@@ -33,20 +55,11 @@ class SudokuSquare extends Component {
     }).start();
   }
 
-  renderUserInput = index => {
-    const { numberInputList } = this.context.state;
-    for (cur of numberInputList) {
-      if (cur.grid === this.props.grid && cur.index === index) {
-        return cur.number;
-      }
-    }
-    return "";
-  };
-
   renderHighlights = arr => {
-    const { currentCell } = this.context.state;
-
-    if (!currentCell) return;
+    const { currentCell, sudoku } = this.context.state;
+    const row =
+      Math.floor(currentCell.grid / 3) * 3 + Math.floor(currentCell.index / 3);
+    const col = (currentCell.grid % 3) * 3 + (currentCell.index % 3);
 
     for (i = 0; i < 9; i++) {
       arr[i].highlight = arr[i].currentHighlight = arr[
@@ -55,12 +68,25 @@ class SudokuSquare extends Component {
     }
 
     for (i = 0; i < 9; i++) {
-      if (
-        currentCell.elem.visible &&
-        arr[i].value === currentCell.elem.value &&
-        arr[i].visible
-      )
-        arr[i].numberHighlight = true;
+      if (arr[i].visible || arr[i].inputValue) {
+        if (arr[i].visible) {
+          if (
+            (sudoku[row][col].visible &&
+              sudoku[row][col].value === arr[i].value) ||
+            (!sudoku[row][col].visible &&
+              sudoku[row][col].inputValue === arr[i].value)
+          )
+            arr[i].numberHighlight = true;
+        } else {
+          if (
+            (sudoku[row][col].visible &&
+              sudoku[row][col].value === arr[i].inputValue) ||
+            (!sudoku[row][col].visible &&
+              sudoku[row][col].inputValue === arr[i].inputValue)
+          )
+            arr[i].numberHighlight = true;
+        }
+      }
     }
 
     if (this.props.grid === currentCell.grid) {
@@ -93,9 +119,9 @@ class SudokuSquare extends Component {
         <Text
           style={{ ...style.numberStyle, ...inlineStyle }}
           key={index}
-          onPress={() => this.context.selectCell(this.props.grid, index, elem)}
+          onPress={() => this.context.selectCell(this.props.grid, index)}
         >
-          {elem.visible ? elem.value : this.renderUserInput(index)}
+          {elem.visible ? elem.value : elem.inputValue}
         </Text>
       );
     });

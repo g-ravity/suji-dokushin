@@ -1,5 +1,4 @@
 import shuffleList from "./shuffleList";
-import arrayToGridList from "./arrayToGridList";
 
 const calculateRow = (arr, row) => {
   const rowArr = [];
@@ -79,5 +78,5 @@ export default generateSudoku = () => {
     }
   }
 
-  return arrayToGridList(arr);
+  return arr;
 };

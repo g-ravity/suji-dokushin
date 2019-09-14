@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { View, StyleSheet, Text, StatusBar, FlatList } from "react-native";
 
 import { Context as GameContext } from "../context/GameContext";
@@ -7,9 +7,11 @@ import SudokuBoard from "../components/SudokuBoard";
 import Icon from "../components/Icon";
 
 const GameScreen = ({ navigation }) => {
-  const { state, onNumberSelect } = useContext(GameContext);
+  const { state, onNumberSelect, resetGame } = useContext(GameContext);
 
   const { level, visible } = navigation.getParam("gameLevel");
+
+  useEffect(() => () => resetGame(), []);
 
   return (
     <View style={{ flex: 1 }}>

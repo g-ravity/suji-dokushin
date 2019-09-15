@@ -5,6 +5,7 @@ import { Context as GameContext } from "../context/GameContext";
 import Header from "../components/Header";
 import SudokuBoard from "../components/SudokuBoard";
 import Icon from "../components/Icon";
+import GameLostModal from "../components/GameLostModal";
 
 const GameScreen = ({ navigation }) => {
   const {
@@ -14,7 +15,8 @@ const GameScreen = ({ navigation }) => {
     undoAction,
     deleteAction,
     hintAction,
-    pencilAction
+    pencilAction,
+    checkGameState
   } = useContext(GameContext);
 
   const { level, visible } = navigation.getParam("gameLevel");
@@ -29,6 +31,12 @@ const GameScreen = ({ navigation }) => {
     };
   }, []);
 
+  {
+    if (state.gameOver && state.errors < 3) {
+      setTimeout(() => navigation.navigate("Winning"), 500);
+    }
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={style.containerStyle}>
@@ -36,7 +44,7 @@ const GameScreen = ({ navigation }) => {
         <Text style={style.textStyle}>ERRORS: {state.errors}/3</Text>
       </View>
 
-      {state.gameOver && <Text>Game Over</Text>}
+      <GameLostModal visible={state.gameOver && state.errors === 3} />
 
       <View style={style.playAreaStyle}>
         <SudokuBoard visibleElements={visible} />
@@ -58,12 +66,11 @@ const GameScreen = ({ navigation }) => {
                 textAlign: "center"
               }}
             >
-              Tap Play To Resume!
+              {state.gameOver ? "" : "Tap Play To Resume!"}
             </Text>
           </View>
         )}
       </View>
-
       <View style={style.iconContainerStyle}>
         <Icon
           icon="rotate-ccw"
@@ -86,7 +93,6 @@ const GameScreen = ({ navigation }) => {
           badge={state.hintsLeft}
         />
       </View>
-
       <View style={{ alignItems: "center" }}>
         <FlatList
           style={{ width: 350 }}
@@ -97,7 +103,10 @@ const GameScreen = ({ navigation }) => {
           renderItem={({ item }) => (
             <Text
               style={style.numberStyle}
-              onPress={() => onNumberSelect(item)}
+              onPress={() => {
+                onNumberSelect(item);
+                setTimeout(checkGameState, 500);
+              }}
             >
               {item}
             </Text>

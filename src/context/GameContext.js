@@ -71,7 +71,6 @@ const gameReducer = (state, action) => {
           ],
           sudoku,
           errors,
-          gameOver: errors === 3 || checkSudokuResult(sudoku),
           isUndoLeft: true
         };
       }
@@ -151,6 +150,14 @@ const gameReducer = (state, action) => {
     }
     case "pencil":
       return { ...state, isPencilActive: !state.isPencilActive };
+    case "check_game_state":
+      if (state.errors === 3 || checkSudokuResult(state.sudoku))
+        return {
+          ...state,
+          gameOver: true,
+          isPaused: true
+        };
+      else return state;
     default:
       return state;
   }
@@ -169,6 +176,7 @@ const undoAction = dispatch => () => dispatch({ type: "undo" });
 const deleteAction = dispatch => () => dispatch({ type: "delete" });
 const hintAction = dispatch => () => dispatch({ type: "hint" });
 const pencilAction = dispatch => () => dispatch({ type: "pencil" });
+const checkGameState = dispatch => () => dispatch({ type: "check_game_state" });
 
 export const { Context, Provider } = createDataContext(
   gameReducer,
@@ -182,7 +190,8 @@ export const { Context, Provider } = createDataContext(
     undoAction,
     deleteAction,
     hintAction,
-    pencilAction
+    pencilAction,
+    checkGameState
   },
   {
     isPaused: false,

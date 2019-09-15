@@ -14,7 +14,6 @@ const LevelModal = ({ showModal, setShowModal, navigation }) => {
   return (
     <Modal
       animationType="slide"
-      transparent={false}
       visible={showModal}
       transparent
       onRequestClose={() => {

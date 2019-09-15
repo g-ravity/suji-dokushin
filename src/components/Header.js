@@ -23,6 +23,10 @@ const Header = ({ navigation }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (gameState.gameOver) stopTimer();
+  });
+
   renderButton = () => {
     return gameState.isPaused ? (
       <Button

@@ -8,6 +8,7 @@ import { Feather } from "@expo/vector-icons";
 
 import HomeScreen from "./src/screens/HomeScreen";
 import GameScreen from "./src/screens/GameScreen";
+import WinningScreen from "./src/screens/WinningScreen";
 import ChallengesScreen from "./src/screens/ChallengesScreen";
 import StatisticsScreen from "./src/screens/StatisticsScreen";
 import { Provider as FontProvider } from "./src/context/FontContext";
@@ -78,9 +79,11 @@ const navigator = createStackNavigator(
         shifting: true
       }
     ),
-    Game: GameScreen
+    Game: GameScreen,
+    Winning: WinningScreen
   },
   {
+    initialRouteName: "Winning",
     defaultNavigationOptions: {
       header: null
     }

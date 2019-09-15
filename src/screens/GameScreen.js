@@ -13,7 +13,8 @@ const GameScreen = ({ navigation }) => {
     resetGame,
     undoAction,
     deleteAction,
-    hintAction
+    hintAction,
+    pencilAction
   } = useContext(GameContext);
 
   const { level, visible } = navigation.getParam("gameLevel");
@@ -71,7 +72,12 @@ const GameScreen = ({ navigation }) => {
           disabled={!state.isUndoLeft}
         />
         <Icon icon="trash" text="DELETE" onPress={deleteAction} />
-        <Icon icon="edit-2" text="PENCIL" badge="ON" />
+        <Icon
+          icon="edit-2"
+          text="PENCIL"
+          badge={state.isPencilActive ? "ON" : "OFF"}
+          onPress={pencilAction}
+        />
         <Icon
           icon="zap"
           text="HINT"

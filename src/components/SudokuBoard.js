@@ -15,7 +15,10 @@ const SudokuBoard = ({ visibleElements }) => {
     sudoku = hideSudokuCells(sudoku, visibleElements);
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
-        if (!sudoku[i][j].visible) sudoku[i][j].inputValue = "";
+        if (!sudoku[i][j].visible) {
+          sudoku[i][j].inputValue = "";
+          sudoku[i][j].pencilArray = ["", "", "", "", "", "", "", "", ""];
+        }
       }
     }
     storeSudoku(sudoku);

@@ -1,7 +1,15 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, Animated, Easing } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Easing,
+  TouchableWithoutFeedback
+} from "react-native";
 
 import { Context as GameContext } from "../context/GameContext";
+import { isPencilArrayEmpty } from "../utils";
 
 const configureStyle = (elem, index) => {
   let style = {};
@@ -111,18 +119,48 @@ class SudokuSquare extends Component {
     }
   };
 
+  renderPencilGrid = arr => {
+    if (!isPencilArrayEmpty(arr))
+      return arr.map((cur, index) => (
+        <Text
+          style={{
+            fontSize: 12,
+            textAlign: "center",
+            color: "#808080",
+            width: "33%",
+            height: "33%"
+          }}
+          key={index}
+        >
+          {cur}
+        </Text>
+      ));
+    else return null;
+  };
+
   renderGrid = () => {
     this.renderHighlights(this.props.numberList);
     return this.props.numberList.map((elem, index) => {
       const inlineStyle = configureStyle(elem, index);
       return (
-        <Text
-          style={{ ...style.numberStyle, ...inlineStyle }}
-          key={index}
+        <TouchableWithoutFeedback
           onPress={() => this.context.selectCell(this.props.grid, index)}
+          key={index}
         >
-          {elem.visible ? elem.value : elem.inputValue}
-        </Text>
+          <View style={{ ...style.numberViewStyle, ...inlineStyle }}>
+            {elem.visible ? (
+              <Text style={style.numberTextStyle}>{elem.value}</Text>
+            ) : elem.inputValue ? (
+              <Text
+                style={{ ...style.numberTextStyle, color: inlineStyle.color }}
+              >
+                {elem.inputValue}
+              </Text>
+            ) : (
+              this.renderPencilGrid(elem.pencilArray)
+            )}
+          </View>
+        </TouchableWithoutFeedback>
       );
     });
   };
@@ -154,17 +192,21 @@ const style = StyleSheet.create({
     flexWrap: "wrap",
     flexBasis: "30%"
   },
-  numberStyle: {
+  numberViewStyle: {
     flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     flexBasis: "33%",
     height: "33%",
     borderRightWidth: 1,
     borderBottomWidth: 1,
+    borderColor: "#c2c2c2"
+  },
+  numberTextStyle: {
     fontFamily: "JosefinSans-Regular",
     fontSize: 24,
-    textAlign: "center",
-    color: "#2d2d2d",
-    borderColor: "#c2c2c2"
+    color: "#2d2d2d"
   }
 });
 

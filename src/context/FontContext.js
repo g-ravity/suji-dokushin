@@ -11,18 +11,13 @@ const fontReducer = (state, action) => {
   }
 };
 
-const loadFont = dispatch => () => {
-  Promise.all([
-    Font.loadAsync({
-      "JosefinSans-Bold": require("../../assets/fonts/JosefinSans-Bold.ttf")
-    }),
-    Font.loadAsync({
-      "JosefinSans-Light": require("../../assets/fonts/JosefinSans-Light.ttf")
-    }),
-    Font.loadAsync({
-      "JosefinSans-Regular": require("../../assets/fonts/JosefinSans-Regular.ttf")
-    })
-  ]).then(() => dispatch({ type: "font_loaded" }));
+const loadFont = dispatch => async () => {
+  await Font.loadAsync({
+    "JosefinSans-Bold": require("../../assets/fonts/JosefinSans-Bold.ttf"),
+    "JosefinSans-Light": require("../../assets/fonts/JosefinSans-Light.ttf"),
+    "JosefinSans-Regular": require("../../assets/fonts/JosefinSans-Regular.ttf")
+  });
+  dispatch({ type: "font_loaded" });
 };
 
 export const { Context, Provider } = createDataContext(

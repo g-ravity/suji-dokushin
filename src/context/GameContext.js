@@ -1,5 +1,7 @@
+import _ from "lodash";
+
 import createDataContext from "./createDataContext";
-import { checkSudokuResult } from "../utils";
+import { checkSudokuResult, isPencilArrayEmpty } from "../utils";
 
 const getRowAndCol = cell => {
   const { grid, index } = cell;
@@ -22,6 +24,7 @@ const gameReducer = (state, action) => {
         sudoku: [],
         hintsLeft: 3,
         isUndoLeft: false,
+        isPencilActive: false,
         errors: 0,
         gameOver: false
       };
@@ -30,23 +33,48 @@ const gameReducer = (state, action) => {
     case "number_selected": {
       const { row, col } = getRowAndCol(state.currentCell);
       if (state.sudoku[row][col].visible) return state;
-      const prevValue = state.sudoku[row][col].inputValue;
-      if (prevValue === action.payload) action.payload = "";
       const sudoku = [...state.sudoku];
-      let errors = state.errors;
-      sudoku[row][col].inputValue = action.payload;
-      if (sudoku[row][col].inputValue !== sudoku[row][col].value) errors += 1;
-      return {
-        ...state,
-        userInputList: [
-          ...state.userInputList,
-          { ...state.currentCell, value: action.payload }
-        ],
-        sudoku,
-        errors,
-        gameOver: errors === 3 || checkSudokuResult(sudoku),
-        isUndoLeft: true
-      };
+      if (state.isPencilActive) {
+        sudoku[row][col].inputValue = "";
+        if (sudoku[row][col].pencilArray[action.payload - 1])
+          sudoku[row][col].pencilArray[action.payload - 1] = "";
+        else sudoku[row][col].pencilArray[action.payload - 1] = action.payload;
+        return {
+          ...state,
+          sudoku,
+          userInputList: [
+            ...state.userInputList,
+            {
+              ...state.currentCell,
+              value: "",
+              pencilArray: [...sudoku[row][col].pencilArray]
+            }
+          ],
+          isUndoLeft: true
+        };
+      } else {
+        sudoku[row][col].pencilArray = ["", "", "", "", "", "", "", "", ""];
+        const prevValue = state.sudoku[row][col].inputValue;
+        if (prevValue === action.payload) action.payload = "";
+        let errors = state.errors;
+        sudoku[row][col].inputValue = action.payload;
+        if (sudoku[row][col].inputValue !== sudoku[row][col].value) errors += 1;
+        return {
+          ...state,
+          userInputList: [
+            ...state.userInputList,
+            {
+              ...state.currentCell,
+              value: action.payload,
+              pencilArray: ["", "", "", "", "", "", "", "", ""]
+            }
+          ],
+          sudoku,
+          errors,
+          gameOver: errors === 3 || checkSudokuResult(sudoku),
+          isUndoLeft: true
+        };
+      }
     }
     case "store_sudoku":
       return { ...state, sudoku: action.payload };
@@ -60,9 +88,11 @@ const gameReducer = (state, action) => {
       const sudoku = [...state.sudoku];
       const { row, col } = getRowAndCol(currentCell);
       sudoku[row][col].inputValue = "";
+      sudoku[row][col].pencilArray = ["", "", "", "", "", "", "", "", ""];
       userInputList.forEach(cur => {
         if (cur.grid === currentCell.grid && cur.index === currentCell.index) {
           sudoku[row][col].inputValue = cur.value;
+          sudoku[row][col].pencilArray = cur.pencilArray;
         }
       });
       return {
@@ -76,14 +106,23 @@ const gameReducer = (state, action) => {
     case "delete": {
       const { row, col } = getRowAndCol(state.currentCell);
       const sudoku = [...state.sudoku];
-      if (!sudoku[row][col].visible && sudoku[row][col].inputValue) {
+      if (
+        !sudoku[row][col].visible &&
+        (sudoku[row][col].inputValue ||
+          !isPencilArrayEmpty(sudoku[row][col].pencilArray))
+      ) {
         sudoku[row][col].inputValue = "";
+        sudoku[row][col].pencilArray = ["", "", "", "", "", "", "", "", ""];
         return {
           ...state,
           sudoku,
           userInputList: [
             ...state.userInputList,
-            { ...state.currentCell, value: "" }
+            {
+              ...state.currentCell,
+              value: "",
+              pencilArray: ["", "", "", "", "", "", "", "", ""]
+            }
           ]
         };
       }
@@ -92,9 +131,26 @@ const gameReducer = (state, action) => {
     case "hint": {
       const { row, col } = getRowAndCol(state.currentCell);
       const sudoku = [...state.sudoku];
+      sudoku[row][col] = _.omit(sudoku[row][col], [
+        "inputValue",
+        "pencilArray"
+      ]);
       sudoku[row][col].visible = true;
-      return { ...state, sudoku, hintsLeft: state.hintsLeft - 1 };
+      const userInputList = state.userInputList.filter(
+        cur =>
+          state.currentCell.grid !== cur.grid ||
+          state.currentCell.index !== cur.index
+      );
+      return {
+        ...state,
+        sudoku,
+        hintsLeft: state.hintsLeft - 1,
+        userInputList,
+        isUndoLeft: Boolean(userInputList.length)
+      };
     }
+    case "pencil":
+      return { ...state, isPencilActive: !state.isPencilActive };
     default:
       return state;
   }
@@ -112,6 +168,7 @@ const storeSudoku = dispatch => sudoku =>
 const undoAction = dispatch => () => dispatch({ type: "undo" });
 const deleteAction = dispatch => () => dispatch({ type: "delete" });
 const hintAction = dispatch => () => dispatch({ type: "hint" });
+const pencilAction = dispatch => () => dispatch({ type: "pencil" });
 
 export const { Context, Provider } = createDataContext(
   gameReducer,
@@ -124,7 +181,8 @@ export const { Context, Provider } = createDataContext(
     storeSudoku,
     undoAction,
     deleteAction,
-    hintAction
+    hintAction,
+    pencilAction
   },
   {
     isPaused: false,
@@ -133,6 +191,7 @@ export const { Context, Provider } = createDataContext(
     sudoku: [],
     hintsLeft: 3,
     isUndoLeft: false,
+    isPencilActive: false,
     errors: 0,
     gameOver: false
   }

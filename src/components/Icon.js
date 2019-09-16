@@ -2,8 +2,19 @@ import React from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { withBadge, Icon as IconNative } from "react-native-elements";
 import { Feather } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 
-const Icon = ({ icon, text, labelStyle, onPress, disabled, badge }) => {
+playTapSound = async () => {
+  const soundObject = new Audio.Sound();
+  try {
+    await soundObject.loadAsync(require("../../assets/sounds/tap.mp3"));
+    await soundObject.playAsync();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const Icon = ({ icon, text, labelStyle, onPress, disabled, badge, sound }) => {
   const inlineStyle = {};
   let BadgedIcon;
   if (disabled) inlineStyle.opacity = 0.5;
@@ -32,7 +43,13 @@ const Icon = ({ icon, text, labelStyle, onPress, disabled, badge }) => {
   }
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity
+      onPress={() => {
+        if (sound) playTapSound();
+        onPress();
+      }}
+      disabled={disabled}
+    >
       <View style={{ ...style.iconGroupStyle, ...inlineStyle }}>
         {badge ? (
           <BadgedIcon type="feather" size={20} name={icon} />

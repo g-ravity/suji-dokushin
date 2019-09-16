@@ -99,6 +99,7 @@ const GameScreen = ({ navigation }) => {
           text="UNDO"
           onPress={undoAction}
           disabled={!state.isUndoLeft}
+          sound
         />
         <Icon icon="trash" text="DELETE" onPress={deleteAction} />
         <Icon
@@ -106,6 +107,7 @@ const GameScreen = ({ navigation }) => {
           text="PENCIL"
           badge={state.isPencilActive ? "ON" : "OFF"}
           onPress={pencilAction}
+          sound
         />
         <Icon
           icon="zap"

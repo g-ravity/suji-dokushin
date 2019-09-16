@@ -3,9 +3,20 @@ import { Text, View, StyleSheet, Animated, StatusBar } from "react-native";
 import { Button } from "react-native-paper";
 import SafeAreaView from "react-native-safe-area-view";
 import { Feather } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 
 import LevelModal from "../components/LevelModal";
 import { convertSecondsToTime } from "../utils";
+
+const playSound = async () => {
+  const soundObject = new Audio.Sound();
+  try {
+    await soundObject.loadAsync(require("../../assets/sounds/win.mp3"));
+    await soundObject.playAsync();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 class WinningScreen extends Component {
   constructor(props) {
@@ -28,6 +39,7 @@ class WinningScreen extends Component {
   };
 
   componentDidMount() {
+    playSound();
     this.spring();
     this.navListener = this.props.navigation.addListener("didFocus", () =>
       StatusBar.setBarStyle("dark-content")

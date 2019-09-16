@@ -1,7 +1,18 @@
 import _ from "lodash";
+import { Audio } from "expo-av";
 
 import createDataContext from "./createDataContext";
 import { checkSudokuResult, isPencilArrayEmpty } from "../utils";
+
+const playSound = async sound => {
+  const soundObject = new Audio.Sound();
+  try {
+    await soundObject.loadAsync(sound);
+    await soundObject.playAsync();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const getRowAndCol = cell => {
   const { grid, index } = cell;
@@ -35,6 +46,7 @@ const gameReducer = (state, action) => {
       if (state.sudoku[row][col].visible) return state;
       const sudoku = [...state.sudoku];
       if (state.isPencilActive) {
+        playSound(require("../../assets/sounds/pencil-input.mp3"));
         sudoku[row][col].inputValue = "";
         if (sudoku[row][col].pencilArray[action.payload - 1])
           sudoku[row][col].pencilArray[action.payload - 1] = "";
@@ -53,12 +65,17 @@ const gameReducer = (state, action) => {
           isUndoLeft: true
         };
       } else {
+        playSound(require("../../assets/sounds/tap.mp3"));
         sudoku[row][col].pencilArray = ["", "", "", "", "", "", "", "", ""];
         const prevValue = state.sudoku[row][col].inputValue;
         if (prevValue === action.payload) action.payload = "";
         let errors = state.errors;
         sudoku[row][col].inputValue = action.payload;
-        if (sudoku[row][col].inputValue !== sudoku[row][col].value) errors += 1;
+        if (
+          sudoku[row][col].inputValue !== sudoku[row][col].value &&
+          sudoku[row][col].inputValue
+        )
+          errors += 1;
         return {
           ...state,
           userInputList: [
@@ -110,6 +127,7 @@ const gameReducer = (state, action) => {
         (sudoku[row][col].inputValue ||
           !isPencilArrayEmpty(sudoku[row][col].pencilArray))
       ) {
+        playSound(require("../../assets/sounds/erase.mp3"));
         sudoku[row][col].inputValue = "";
         sudoku[row][col].pencilArray = ["", "", "", "", "", "", "", "", ""];
         return {
@@ -130,6 +148,8 @@ const gameReducer = (state, action) => {
     case "hint": {
       const { row, col } = getRowAndCol(state.currentCell);
       const sudoku = [...state.sudoku];
+      if (sudoku[row][col].visible) return state;
+      playSound(require("../../assets/sounds/hint.mp3"));
       sudoku[row][col] = _.omit(sudoku[row][col], [
         "inputValue",
         "pencilArray"

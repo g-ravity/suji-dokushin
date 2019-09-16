@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import SafeAreaView from "react-native-safe-area-view";
-import { View, StyleSheet, StatusBar, Text } from "react-native";
-import { Button } from "react-native-paper";
+import { View, StyleSheet, StatusBar, Text, Image } from "react-native";
+import { Button, TouchableRipple } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 
 import LevelModal from "../components/LevelModal";
@@ -27,13 +27,21 @@ const HomeScreen = ({ navigation }) => {
             <Text style={style.subHeaderStyle}>Sūji</Text>
             <Text style={style.headerStyle}>DOKUSHIN</Text>
           </View>
-          <Button onPress={() => setShowModal(true)} color="#2d2d2d">
-            <Feather
+          <TouchableRipple
+            onPress={() => setShowModal(true)}
+            color="#2d2d2d"
+            // contentStyle={{ width: 200, height: 200 }}
+          >
+            {/* <Feather
               name="play-circle"
               size={130}
               style={{ color: "#5700a3" }}
+            /> */}
+            <Image
+              source={require("../../assets/images/play.png")}
+              style={{ width: 200, height: 200 }}
             />
-          </Button>
+          </TouchableRipple>
           <Button
             mode="contained"
             color="#2d2d2d"

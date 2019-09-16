@@ -83,14 +83,15 @@ class WinningScreen extends Component {
           style={{
             ...style.rowContainerStyle,
             width: "100%",
-            justifyContent: "space-around"
+            justifyContent: "space-around",
+            marginBottom: 20
           }}
         >
           <Button
             mode="contained"
             onPress={() => this.props.navigation.navigate("Home")}
             color="#5700a3"
-            style={{ alignSelf: "flex-start" }}
+            style={{ flex: 1, marginRight: 10, marginLeft: 20 }}
           >
             <Feather name="home" size={30} />
           </Button>
@@ -98,7 +99,7 @@ class WinningScreen extends Component {
             mode="contained"
             color="#5700a3"
             uppercase={false}
-            style={{ marginBottom: 20 }}
+            style={{ flex: 1, marginRight: 20, marginLeft: 10 }}
             onPress={() => this.setState({ showModal: true })}
           >
             <Text style={{ fontFamily: "JosefinSans-Regular", fontSize: 22 }}>

@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Modal } from "react-native";
 import { Text } from "react-native-elements";
 import { Button } from "react-native-paper";
-import { withNavigation } from "react-navigation";
 
-const GameLostModal = ({ visible, navigation }) => {
+import LevelModal from "../components/LevelModal";
+
+const GameLostModal = ({ visible, forceRemount }) => {
+  const [showLevelModal, setShowLevelModal] = useState(false);
+
   return (
     <Modal
       visible={visible}
@@ -24,14 +27,22 @@ const GameLostModal = ({ visible, navigation }) => {
           </Text>
           <Button
             mode="contained"
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => setShowLevelModal(true)}
             style={{ marginVertical: 15 }}
             color="#5700a3"
           >
-            NEW GAME
+            <Text style={{ fontFamily: "JosefinSans-Regular", fontSize: 22 }}>
+              New Game
+            </Text>
           </Button>
         </View>
       </View>
+      <LevelModal
+        showModal={showLevelModal}
+        setShowModal={setShowLevelModal}
+        screen="Game"
+        forceRemount={forceRemount}
+      />
     </Modal>
   );
 };
@@ -55,4 +66,4 @@ const style = StyleSheet.create({
   }
 });
 
-export default withNavigation(GameLostModal);
+export default GameLostModal;

@@ -9,7 +9,7 @@ import { Context as GameContext } from "../context/GameContext";
 import { Context as TimerContext } from "../context/TimerContext";
 import { convertSecondsToTime } from "../utils";
 
-const Header = ({ navigation }) => {
+const Header = ({ navigation, onGameOver }) => {
   const { state: gameState, pauseGame, resumeGame } = useContext(GameContext);
   const { state: timerState, startTimer, stopTimer, resetTime } = useContext(
     TimerContext
@@ -24,7 +24,10 @@ const Header = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    if (gameState.gameOver) stopTimer();
+    if (gameState.gameOver) {
+      stopTimer();
+      onGameOver(timerState);
+    }
   });
 
   renderButton = () => {

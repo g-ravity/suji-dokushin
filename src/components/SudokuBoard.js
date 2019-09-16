@@ -10,7 +10,7 @@ const SudokuBoard = ({ visibleElements }) => {
   const { state, storeSudoku } = useContext(GameContext);
   const [loading, setLoader] = useState(true);
 
-  useEffect(() => {
+  createAndStoreSudoku = () => {
     let sudoku = generateSudoku();
     sudoku = hideSudokuCells(sudoku, visibleElements);
     for (let i = 0; i < 9; i++) {
@@ -23,6 +23,11 @@ const SudokuBoard = ({ visibleElements }) => {
     }
     storeSudoku(sudoku);
     setLoader(false);
+  };
+
+  useEffect(() => {
+    setLoader(true);
+    setTimeout(createAndStoreSudoku, 500);
   }, []);
 
   renderSquares = () => {

@@ -10,7 +10,13 @@ import {
 import { Button } from "react-native-paper";
 import { withNavigation } from "react-navigation";
 
-const LevelModal = ({ showModal, setShowModal, navigation }) => {
+const LevelModal = ({
+  showModal,
+  setShowModal,
+  navigation,
+  screen,
+  forceRemount
+}) => {
   return (
     <Modal
       animationType="slide"
@@ -49,9 +55,11 @@ const LevelModal = ({ showModal, setShowModal, navigation }) => {
             <Button
               onPress={() => {
                 setShowModal(false);
-                navigation.navigate("Game", {
-                  gameLevel: item
-                });
+                if (screen === "Game") forceRemount(item);
+                else
+                  navigation.navigate("Game", {
+                    gameLevel: item
+                  });
               }}
               color="#2d2d2d"
             >
@@ -62,6 +70,11 @@ const LevelModal = ({ showModal, setShowModal, navigation }) => {
       </View>
     </Modal>
   );
+};
+
+LevelModal.defaultProps = {
+  screen: null,
+  forceRemount: null
 };
 
 const style = StyleSheet.create({

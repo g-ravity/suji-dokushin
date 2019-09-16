@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { createAppContainer } from "react-navigation";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -24,71 +24,72 @@ const tabConfig = {
   }
 };
 
-const navigator = createStackNavigator(
-  {
-    mainFlow: createMaterialBottomTabNavigator(
-      {
-        Home: {
-          screen: HomeScreen,
-          navigationOptions: {
-            tabBarLabel: <Text style={tabConfig.labelStyle}>Home</Text>,
-            tabBarIcon: ({ tintColor }) => (
-              <Feather
-                name="home"
-                style={tabConfig.iconStyle}
-                color={tintColor}
-              />
-            )
+const navigator = createSwitchNavigator({
+  gameFlow: createStackNavigator(
+    {
+      mainFlow: createMaterialBottomTabNavigator(
+        {
+          Home: {
+            screen: HomeScreen,
+            navigationOptions: {
+              tabBarLabel: <Text style={tabConfig.labelStyle}>Home</Text>,
+              tabBarIcon: ({ tintColor }) => (
+                <Feather
+                  name="home"
+                  style={tabConfig.iconStyle}
+                  color={tintColor}
+                />
+              )
+            }
+          },
+          Statistics: {
+            screen: StatisticsScreen,
+            navigationOptions: {
+              tabBarLabel: <Text style={tabConfig.labelStyle}>Statistics</Text>,
+              tabBarIcon: ({ tintColor }) => (
+                <Feather
+                  name="bar-chart"
+                  style={tabConfig.iconStyle}
+                  color={tintColor}
+                />
+              )
+            }
+          },
+          Challenges: {
+            screen: ChallengesScreen,
+            navigationOptions: {
+              tabBarLabel: <Text style={tabConfig.labelStyle}>Challenges</Text>,
+              tabBarIcon: ({ tintColor }) => (
+                <Feather
+                  name="award"
+                  style={tabConfig.iconStyle}
+                  color={tintColor}
+                />
+              )
+            }
           }
         },
-        Statistics: {
-          screen: StatisticsScreen,
-          navigationOptions: {
-            tabBarLabel: <Text style={tabConfig.labelStyle}>Statistics</Text>,
-            tabBarIcon: ({ tintColor }) => (
-              <Feather
-                name="bar-chart"
-                style={tabConfig.iconStyle}
-                color={tintColor}
-              />
-            )
-          }
-        },
-        Challenges: {
-          screen: ChallengesScreen,
-          navigationOptions: {
-            tabBarLabel: <Text style={tabConfig.labelStyle}>Challenges</Text>,
-            tabBarIcon: ({ tintColor }) => (
-              <Feather
-                name="award"
-                style={tabConfig.iconStyle}
-                color={tintColor}
-              />
-            )
-          }
+        {
+          initialRouteName: "Home",
+          order: ["Home", "Statistics", "Challenges"],
+          barStyle: {
+            backgroundColor: "#2d2d2d",
+            height: 70,
+            justifyContent: "center"
+          },
+          shifting: true
         }
-      },
-      {
-        initialRouteName: "Home",
-        order: ["Home", "Statistics", "Challenges"],
-        barStyle: {
-          backgroundColor: "#2d2d2d",
-          height: 70,
-          justifyContent: "center"
-        },
-        shifting: true
+      ),
+      Game: GameScreen
+    },
+    {
+      defaultNavigationOptions: {
+        header: null
       }
-    ),
-    Game: GameScreen,
-    Winning: WinningScreen
-  },
-  {
-    initialRouteName: "Winning",
-    defaultNavigationOptions: {
-      header: null
     }
-  }
-);
+  ),
+  Winning: WinningScreen
+});
 
 const App = createAppContainer(navigator);
 

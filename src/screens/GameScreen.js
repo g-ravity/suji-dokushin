@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text, StatusBar, FlatList } from "react-native";
 
 import { Context as GameContext } from "../context/GameContext";
@@ -8,6 +8,11 @@ import Icon from "../components/Icon";
 import GameLostModal from "../components/GameLostModal";
 
 const GameScreen = ({ navigation }) => {
+  const [key, setKey] = useState(1);
+  const [levelDetail, setLevelDetail] = useState(
+    navigation.getParam("gameLevel")
+  );
+
   const {
     state,
     onNumberSelect,
@@ -19,7 +24,7 @@ const GameScreen = ({ navigation }) => {
     checkGameState
   } = useContext(GameContext);
 
-  const { level, visible } = navigation.getParam("gameLevel");
+  StatusBar.setBarStyle("light-content");
 
   useEffect(() => {
     const navListener = navigation.addListener("didFocus", () =>
@@ -31,23 +36,36 @@ const GameScreen = ({ navigation }) => {
     };
   }, []);
 
-  {
-    if (state.gameOver && state.errors < 3) {
-      setTimeout(() => navigation.navigate("Winning"), 500);
-    }
-  }
+  forceRemount = levelDetailItem => {
+    resetGame();
+    setKey(key + 1);
+    setLevelDetail(levelDetailItem);
+  };
+
+  goToWinningScreen = seconds => {
+    if (state.gameOver && state.errors < 3)
+      navigation.navigate("Winning", {
+        level: levelDetail.level,
+        time: seconds
+      });
+  };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} key={key}>
+      <Header onGameOver={goToWinningScreen} />
+
       <View style={style.containerStyle}>
-        <Text style={style.textStyle}>{level.toUpperCase()}</Text>
+        <Text style={style.textStyle}>{levelDetail.level.toUpperCase()}</Text>
         <Text style={style.textStyle}>ERRORS: {state.errors}/3</Text>
       </View>
 
-      <GameLostModal visible={state.gameOver && state.errors === 3} />
+      <GameLostModal
+        visible={state.gameOver && state.errors === 3}
+        forceRemount={forceRemount}
+      />
 
       <View style={style.playAreaStyle}>
-        <SudokuBoard visibleElements={visible} />
+        <SudokuBoard visibleElements={levelDetail.visible} />
         {state.isPaused && (
           <View
             style={{
@@ -66,7 +84,11 @@ const GameScreen = ({ navigation }) => {
                 textAlign: "center"
               }}
             >
-              {state.gameOver ? "" : "Tap Play To Resume!"}
+              {state.gameOver
+                ? state.errors === 3
+                  ? ""
+                  : "Congratulations!"
+                : "Tap Play To Resume!"}
             </Text>
           </View>
         )}
@@ -105,7 +127,7 @@ const GameScreen = ({ navigation }) => {
               style={style.numberStyle}
               onPress={() => {
                 onNumberSelect(item);
-                setTimeout(checkGameState, 500);
+                checkGameState();
               }}
             >
               {item}
@@ -115,10 +137,6 @@ const GameScreen = ({ navigation }) => {
       </View>
     </View>
   );
-};
-
-GameScreen.navigationOptions = {
-  header: <Header />
 };
 
 const style = StyleSheet.create({

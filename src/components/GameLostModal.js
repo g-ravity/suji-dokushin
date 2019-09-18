@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { View, StyleSheet, Modal } from "react-native";
 import { Text } from "react-native-elements";
 import { Button } from "react-native-paper";
+import { withNavigation } from "react-navigation";
 
 import LevelModal from "../components/LevelModal";
 
-const GameLostModal = ({ visible, forceRemount }) => {
+const GameLostModal = ({ visible, forceRemount, navigation }) => {
   const [showLevelModal, setShowLevelModal] = useState(false);
 
   return (
@@ -19,22 +20,26 @@ const GameLostModal = ({ visible, forceRemount }) => {
     >
       <View style={style.modalBackgroundStyle}>
         <View style={style.modalContainerStyle}>
-          <Text h3 h3Style={{ marginBottom: 15 }}>
+          <Text h3 h3Style={{ marginBottom: 10, textTransform: "uppercase" }}>
             Game Over
           </Text>
           <Text style={style.modalTextStyle}>
-            You have made 3 mistakes and lost this game
+            You have made 3 errors and lost this game
           </Text>
-          <Button
-            mode="contained"
-            onPress={() => setShowLevelModal(true)}
-            style={{ marginVertical: 15 }}
-            color="#5700a3"
-          >
-            <Text style={{ fontFamily: "JosefinSans-Regular", fontSize: 22 }}>
+          <View style={style.buttonContainerStyle}>
+            <Text
+              style={style.buttonTextStyle}
+              onPress={() => navigation.navigate("Home")}
+            >
+              Home
+            </Text>
+            <Text
+              style={style.buttonTextStyle}
+              onPress={() => setShowLevelModal(true)}
+            >
               New Game
             </Text>
-          </Button>
+          </View>
         </View>
       </View>
       <LevelModal
@@ -56,14 +61,26 @@ const style = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)"
   },
   modalContainerStyle: {
-    width: 250,
+    width: "80%",
     backgroundColor: "#ffffff",
-    padding: 20
+    padding: 20,
+    borderRadius: 20
   },
   modalTextStyle: {
     fontFamily: "JosefinSans-Regular",
     fontSize: 20
+  },
+  buttonContainerStyle: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15
+  },
+  buttonTextStyle: {
+    fontFamily: "JosefinSans-Regular",
+    fontSize: 18,
+    textTransform: "uppercase",
+    color: "#5700a3"
   }
 });
 
-export default GameLostModal;
+export default withNavigation(GameLostModal);

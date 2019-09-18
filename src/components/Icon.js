@@ -14,7 +14,7 @@ playTapSound = async () => {
   }
 };
 
-const Icon = ({ icon, text, labelStyle, onPress, disabled, badge, sound }) => {
+const Icon = ({ icon, text, onPress, disabled, badge, sound }) => {
   const inlineStyle = {};
   let BadgedIcon;
   if (disabled) inlineStyle.opacity = 0.5;
@@ -37,7 +37,8 @@ const Icon = ({ icon, text, labelStyle, onPress, disabled, badge, sound }) => {
       badgeStyle,
       textStyle: {
         fontFamily: "JosefinSans-Regular",
-        marginTop: -3
+        marginTop: -3,
+        textTransform: "uppercase"
       }
     })(IconNative);
   }
@@ -56,14 +57,13 @@ const Icon = ({ icon, text, labelStyle, onPress, disabled, badge, sound }) => {
         ) : (
           <Feather name={icon} size={20} />
         )}
-        <Text style={{ ...style.iconTextStyle, ...labelStyle }}>{text}</Text>
+        <Text style={style.iconTextStyle}>{text}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 Icon.defaultProps = {
-  labelStyle: null,
   disabled: false,
   badge: null
 };
@@ -75,7 +75,8 @@ const style = StyleSheet.create({
   iconTextStyle: {
     fontFamily: "JosefinSans-Light",
     fontSize: 12,
-    color: "#2d2d2d"
+    color: "#2d2d2d",
+    textTransform: "uppercase"
   }
 });
 

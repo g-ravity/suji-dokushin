@@ -55,8 +55,8 @@ const GameScreen = ({ navigation }) => {
       <Header onGameOver={goToWinningScreen} />
 
       <View style={style.containerStyle}>
-        <Text style={style.textStyle}>{levelDetail.level.toUpperCase()}</Text>
-        <Text style={style.textStyle}>ERRORS: {state.errors}/3</Text>
+        <Text style={style.textStyle}>{levelDetail.level}</Text>
+        <Text style={style.textStyle}>Errors: {state.errors}/3</Text>
       </View>
 
       <GameLostModal
@@ -96,22 +96,22 @@ const GameScreen = ({ navigation }) => {
       <View style={style.iconContainerStyle}>
         <Icon
           icon="rotate-ccw"
-          text="UNDO"
+          text="Undo"
           onPress={undoAction}
           disabled={!state.isUndoLeft}
           sound
         />
-        <Icon icon="trash" text="DELETE" onPress={deleteAction} />
+        <Icon icon="trash" text="Delete" onPress={deleteAction} />
         <Icon
           icon="edit-2"
-          text="PENCIL"
-          badge={state.isPencilActive ? "ON" : "OFF"}
+          text="Pencil"
+          badge={state.isPencilActive ? "On" : "Off"}
           onPress={pencilAction}
           sound
         />
         <Icon
           icon="zap"
-          text="HINT"
+          text="Hint"
           onPress={hintAction}
           disabled={!state.hintsLeft}
           badge={state.hintsLeft}
@@ -152,7 +152,8 @@ const style = StyleSheet.create({
   textStyle: {
     fontFamily: "JosefinSans-Bold",
     fontSize: 15,
-    color: "#ffffff"
+    color: "#ffffff",
+    textTransform: "uppercase"
   },
   playAreaStyle: { flex: 1, marginVertical: 20, marginHorizontal: 5 },
   iconContainerStyle: {

@@ -25,18 +25,12 @@ const HomeScreen = ({ navigation }) => {
         <View style={style.containerStyle}>
           <View style={{ alignItems: "center" }}>
             <Text style={style.subHeaderStyle}>Sūji</Text>
-            <Text style={style.headerStyle}>DOKUSHIN</Text>
+            <Text style={style.headerStyle}>Dokushin</Text>
           </View>
           <TouchableRipple
             onPress={() => setShowModal(true)}
             color="#2d2d2d"
-            // contentStyle={{ width: 200, height: 200 }}
           >
-            {/* <Feather
-              name="play-circle"
-              size={130}
-              style={{ color: "#5700a3" }}
-            /> */}
             <Image
               source={require("../../assets/images/play.png")}
               style={{ width: 200, height: 200 }}
@@ -72,7 +66,8 @@ const style = StyleSheet.create({
   headerStyle: {
     fontSize: 40,
     fontFamily: "JosefinSans-Bold",
-    color: "#2d2d2d"
+    color: "#2d2d2d",
+    textTransform: 'uppercase'
   },
   btnTextStyle: {
     color: "#ffffff",

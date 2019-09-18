@@ -54,7 +54,7 @@ class WinningScreen extends Component {
     return (
       <SafeAreaView forceInset={{ top: "always" }} style={style.containerStyle}>
         <View>
-          <Text style={style.headerStyle}>BEST TIME</Text>
+          <Text style={style.headerStyle}>Best Time</Text>
           <View style={style.rowContainerStyle}>
             <Feather
               name="clock"
@@ -93,18 +93,15 @@ class WinningScreen extends Component {
             color="#5700a3"
             style={{ flex: 1, marginRight: 10, marginLeft: 20 }}
           >
-            <Feather name="home" size={30} />
+            <Text style={style.buttonTextStyle}>Home</Text>
           </Button>
           <Button
             mode="contained"
             color="#5700a3"
-            uppercase={false}
             style={{ flex: 1, marginRight: 20, marginLeft: 10 }}
             onPress={() => this.setState({ showModal: true })}
           >
-            <Text style={{ fontFamily: "JosefinSans-Regular", fontSize: 22 }}>
-              New Game
-            </Text>
+            <Text style={style.buttonTextStyle}>New Game</Text>
           </Button>
         </View>
         <LevelModal
@@ -126,7 +123,8 @@ const style = StyleSheet.create({
     fontSize: 40,
     fontFamily: "JosefinSans-Light",
     color: "#5700a3",
-    marginVertical: 10
+    marginVertical: 10,
+    textTransform: "uppercase"
   },
   subHeaderStyle: {
     fontSize: 24,
@@ -142,6 +140,11 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center"
+  },
+  buttonTextStyle: {
+    fontFamily: "JosefinSans-Regular",
+    fontSize: 18,
+    textTransform: "uppercase"
   }
 });
 
